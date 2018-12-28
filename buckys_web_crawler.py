@@ -3,10 +3,14 @@
 #Écrire et ajouter à un fichier Mathes p. 199.
 #Schafer montre où placer le code pour ajouter à un fichier.
 
-import requests 
-import webbrowser
 from bs4 import BeautifulSoup
-    
+import urllib.request
+
+#Python 3.4 urllib.request error (http 403) https://stackoverflow.com/questions/28396036/python-3-4-urllib-request-error-http-403
+url = 'https://www.aelf.org/calendrier/romain/2018/11'
+req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+html = urllib.request.urlopen(req).read()
+  
 #def chercher_date_du_jour(url_date):
 #    with open('liens_lectures_du_mois.txt', 'r') as liens_html:
 #        for messe-du_jour in liens_html:               
@@ -22,14 +26,17 @@ from bs4 import BeautifulSoup
 if __name__ == "__main__":
     """Extraire les liens sur la page du mois"""
     with open('liens_lectures_du_mois.txt', 'a') as af:
+        
+        
+#        source_code = requests.get(url)
+#        source_code.raise_for_status()
+#        plain_text = source_code.text
+        #soup = BeautifulSoup(plain_text, 'html.parser')
+        soup = BeautifulSoup(html, 'html.parser')
+        lectures_liste = soup.find_all('a', {'title': 'Accéder aux messes'})
+        print(lectures_liste)
 
-        url = 'https://www.aelf.org/calendrier/romain/2018/11'
-        source_code = requests.get(url)
-        source_code.raise_for_status()
-        plain_text = source_code.text
-        soup = BeautifulSoup(plain_text, 'html.parser')
-
-        for link in soup.find('a', {'title': 'Accéder aux messes'}):
+        for link in lectures_liste:
             href = "https://www.aelf.org" + link.get('href')
             af.write(href + "\n")
     #Créer un fonction qui cherche le text désiré. Schafer montre comment faire.
