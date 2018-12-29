@@ -33,12 +33,17 @@ if __name__ == "__main__":
 #        plain_text = source_code.text
         #soup = BeautifulSoup(plain_text, 'html.parser')
         soup = BeautifulSoup(html, 'html.parser')
-        lectures_liste = soup.find_all('a', {'title': 'Accéder aux messes'})
-        print(lectures_liste)
+    lectures_tous = soup.find(id='right-col', class_='block-single-reading without-toolbar')
+    #print(lectures_tous.prettify())
+    lectures_ligne = lectures_tous.find('div', class_='row m-b-10').a
+    lectures_messe_et_heures = lectures_tous.find('div', class_='col-sm-3')
+    lectures_messes = lectures_messe_et_heures.find('class', title='Accéder aux messes')
+    print(lectures_messes)
 
-        for link in lectures_liste:
-            href = "https://www.aelf.org" + link.get('href')
-            af.write(href + "\n")
+        #for link in lectures_liste:
+            #lecture_mess_du_jour = 
+            #href = "https://www.aelf.org" + link.get('href')
+            #af.write(href + "\n")
     #Créer un fonction qui cherche le text désiré. Schafer montre comment faire.
     #Ajouter le text désiré au fichier.         
             #ouvrir_onglets_dans_navigateur(href)
@@ -47,7 +52,7 @@ if __name__ == "__main__":
     #Faire appelle au regex qui ajoute le jour de la semaine.         
 
     #def ouvrir_onglets_dans_navigateur(url):
-        """ouvrir les onglets dans la navigator"""
+       # """ouvrir les onglets dans la navigator"""
 
        # webbrowser.open_new_tab(url)
 #What is the perfect counterpart in Python for “while not EOF” https://stackoverflow.com/questions/15599639/what-is-the-perfect-counterpart-in-python-for-while-not-eof    
