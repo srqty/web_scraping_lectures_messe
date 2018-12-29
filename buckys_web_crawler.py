@@ -33,12 +33,17 @@ if __name__ == "__main__":
 #        plain_text = source_code.text
         #soup = BeautifulSoup(plain_text, 'html.parser')
         soup = BeautifulSoup(html, 'html.parser')
-    lectures_tous = soup.find(id='right-col', class_='block-single-reading without-toolbar')
-    #print(lectures_tous.prettify())
-    lectures_ligne = lectures_tous.find('div', class_='row m-b-10').a
-    lectures_messe_et_heures = lectures_tous.find('div', class_='col-sm-3')
-    lectures_messes = lectures_messe_et_heures.find('class', title='Accéder aux messes')
-    print(lectures_messes)
+        lectures_tous = soup.find(id='right-col', \
+                        class_='block-single-reading without-toolbar')
+        #print(lectures_tous.prettify())
+        for lectures_ligne in lectures_tous.find_all('div', class_='row m-b-10'):
+            #print(lectures_ligne.prettify())
+            #lectures_messe_et_heures = lectures_ligne.find('div', class_='col-sm-3')
+            #print(lectures_messe_et_heures)
+            lectures_messes = lectures_ligne.find('a', title='Accéder aux messes')
+            href = "https://www.aelf.org" + lectures_messes.get('href')
+            print(href)
+            
 
         #for link in lectures_liste:
             #lecture_mess_du_jour = 
