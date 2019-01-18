@@ -9,12 +9,19 @@ url = 'https://www.aelf.org/calendrier/romain/2018/11'
 req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
 html = urllib.request.urlopen(req).read()
   
-def chercher_date_du_jour(lien_du_messe):
-    url_date = lien_du_messe
-    req_date = urllib.request.Request(url_date, headers={'User-Agent': 'Mozilla/5.0'})
-    html_date = urllib.request.urlopen(req_date).read()
-    soup_date = BeautifulSoup(html_date, 'html.parser')
-    date = soup_date.find('h4', class_='date')
+"""Reçoit: url de lecture du jour +
+    Retourne: le texte qui contient les lectures avec la date"""
+def chercher_texte_dans_lien(lien_du_messe):
+    url_lecture = lien_du_messe
+    req_lecture = urllib.request.Request(url_lecture, headers={'User-Agent': 'Mozilla/5.0'})
+    html_lecture = urllib.request.urlopen(req_lecture).read()
+    return(html_lecture)
+
+"""Reçoit: url de lecture du jour +
+    Retourne: la date"""
+def chercher_date_du_jour(texte_de_messe):
+    soup_lecture = BeautifulSoup(texte_de_messe, 'html.parser')
+    date = soup_lecture.find('h4', class_='date')
     return(date)
 #
 #def ajouter_texte_fichier(texte_ajouter)
@@ -24,7 +31,6 @@ def chercher_date_du_jour(lien_du_messe):
 
 if __name__ == "__main__":
     #Python 3.4 urllib.request error (http 403) https://stackoverflow.com/questions/28396036/python-3-4-urllib-request-error-http-403
-    
     """Extraire les liens sur la page du mois"""
     with open('liens_lectures_du_mois.txt', 'a') as af:
         
@@ -45,7 +51,15 @@ if __name__ == "__main__":
             href = "https://www.aelf.org" + lectures_messes.get('href')
             af.write(href + "\n")
             
-
+with open('liens_lectures_du_mois.txt', 'r') as lf:
+    """Pour chacun des lignes dans le fichier, on effectue des opérations"""
+    for ligne in lf:
+        """Mettre le texte du liens dans un variable"""
+        lecture_texte = chercher_texte_dans_lien(ligne)
+        """Extraire la date de la page web +
+Reçoit: texte du URL. Retourne: la date du jour"""
+        date_du_jour = chercher_date_du_jour(lecture_texte)
+        print(date_du_jour)
         #for link in lectures_liste:
             #lecture_mess_du_jour = 
             #href = "https://www.aelf.org" + link.get('href')
@@ -62,26 +76,21 @@ if __name__ == "__main__":
 
        # webbrowser.open_new_tab(url)
 ##What is the perfect counterpart in Python for “while not EOF” https://stackoverflow.com/questions/15599639/what-is-the-perfect-counterpart-in-python-for-while-not-eof    
-    with open('liens_lectures_du_mois.txt') as lf:
-        while True:
-            #Problème est dans la boucle while
-            ligne = lf.readline()
-            print(ligne)
-            if "FIN" in ligne:
-                print('Terminé')
-                break
-            else:
-                date_du_jour = chercher_date_du_jour(ligne)
+#    with open('liens_lectures_du_mois.txt') as lf:
+#        while True:
+#            #Problème est dans la boucle while
+#            ligne = lf.readline()
+#            print(ligne)
+#            if "FIN" in ligne:
+#                print('Terminé')
+#                break
+#            else:
+#                date_du_jour = chercher_date_du_jour(ligne)
         #        print(date_du_jour)
         #            ajouter_texte_fichier(date_du_jour)
         #            texte_du_jour = chercher_texte_du_jour()
         #            ajouter_texte_fichier(texte_du_jour)
                 #print(ligne, end='')
-                print(date_du_jour, end='')
+#                print(date_du_jour, end='')
             
 
-#with open('liens_lectures_du_mois.txt', 'r') as lf:
-#    for ligne in lf:
-#        print(ligne, end='')
-#        date_du_jour = chercher_date_du_jour(ligne)
-#        print(date_du_jour, end='')
