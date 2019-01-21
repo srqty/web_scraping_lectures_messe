@@ -3,6 +3,7 @@
 #Écrire et ajouter à un fichier Mathes p. 199.
 #Schafer montre où placer le code pour ajouter à un fichier.
 
+import re
 from bs4 import BeautifulSoup
 import urllib.request
 url = 'https://www.aelf.org/calendrier/romain/2018/11'
@@ -23,6 +24,18 @@ def chercher_date_du_jour(texte_de_messe):
     soup_lecture = BeautifulSoup(texte_de_messe, 'html.parser')
     date = soup_lecture.find('h4', class_='date')
     return(date)
+
+"""Reçoit: url de lecture du jour +
+    Retourne: le texte du jour"""
+def chercher_texte_du_jour(texte_de_messe):
+    soup_lecture = BeautifulSoup(texte_de_messe, 'html.parser')
+    texte_du_jour = ""
+    
+    for texte in soup_lecture.find_all('div', {'id':re.compile('messe1_lecture[0-9]')}):  #Voire Mitchell, faut noter tous les éléments :
+        print(texte)
+       
+    return(texte_du_jour)
+
 #
 #def ajouter_texte_fichier(texte_ajouter)
 #    with open('messes_du_jour.html', 'a') as messes_du_jour_html:
@@ -56,10 +69,17 @@ with open('liens_lectures_du_mois.txt', 'r') as lf:
     for ligne in lf:
         """Mettre le texte du liens dans un variable"""
         lecture_texte = chercher_texte_dans_lien(ligne)
-        """Extraire la date de la page web +
-Reçoit: texte du URL. Retourne: la date du jour"""
+        
+        """Extraire la date de la page web"""
         date_du_jour = chercher_date_du_jour(lecture_texte)
         print(date_du_jour)
+        
+        """Extraire le texte de la page web"""
+        texte_du_jour = chercher_texte_du_jour(lecture_texte)
+        print(texte_du_jour)
+        
+        break
+        
         #for link in lectures_liste:
             #lecture_mess_du_jour = 
             #href = "https://www.aelf.org" + link.get('href')
