@@ -29,14 +29,11 @@ def chercher_date_du_jour(texte_de_messe):
     Retourne: le texte du jour"""
 def chercher_texte_du_jour(texte_de_messe):
     soup_lecture = BeautifulSoup(texte_de_messe, 'html.parser')
-    texte_du_jour = ""
-    
-    for texte in soup_lecture.find_all('div', {'id':re.compile('messe1_lecture[0-9]')}):  #Voire Mitchell, faut noter tous les éléments :
-        print(texte)
-       
-    return(texte_du_jour)
+    texte_complet = [] #créer une liste
+    for texte in soup_lecture.find_all('div', {'id':re.compile('messe1_lecture[0-9]')}):  #Voire Mitchell, faut noter tous les éléments
+        texte_complet.append(texte) # Voire «List append() in for loop [duplicate]» \ https://stackoverflow.com/questions/41452819/list-append-in-for-loop
+    return(texte_complet)
 
-#
 #def ajouter_texte_fichier(texte_ajouter)
 #    with open('messes_du_jour.html', 'a') as messes_du_jour_html:
 #        messes_du_jour_html.write(text_ajouter)
