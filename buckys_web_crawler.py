@@ -29,15 +29,22 @@ def chercher_date_du_jour(texte_de_messe):
     Retourne: le texte du jour"""
 def chercher_texte_du_jour(texte_de_messe):
     soup_lecture = BeautifulSoup(texte_de_messe, 'html.parser')
-    texte_complet = [] #créer une liste
+
+    texte_complet_liste = [] #créer une liste qui contiendra le texte
     for texte in soup_lecture.find_all('div', {'id':re.compile('messe1_lecture[0-9]')}):  #Voire Mitchell, faut noter tous les éléments
-        texte_complet.append(texte) # Voire «List append() in for loop [duplicate]» \ https://stackoverflow.com/questions/41452819/list-append-in-for-loop
-    return(texte_complet)
+        texte_complet_liste.append(texte) 
+#Ajouter les lectures du jour. Voire «List append() in for loop [duplicate]» \ https://stackoverflow.com/questions/41452819/list-append-in-for-loop
 
-#def ajouter_texte_fichier(texte_ajouter)
-#    with open('messes_du_jour.html', 'a') as messes_du_jour_html:
-#        messes_du_jour_html.write(text_ajouter)
+    #Convertir la liste dans un seul string
+    #«Python map() function» https://www.journaldev.com/22960/python-map-function
+    return("".join(map(str, texte_complet_liste)))
 
+"""Reçoit: texte à ajouter au fichier +
+    Retourne: rien"""
+def ajouter_texte_fichier(texte_ajouter):
+    with open('messes_du_jour.html', 'a') as af:     
+        print(type(texte_ajouter)) # Pour savoir le type de variable       
+        af.write(str(texte_ajouter))
 
 if __name__ == "__main__":
     #Python 3.4 urllib.request error (http 403) https://stackoverflow.com/questions/28396036/python-3-4-urllib-request-error-http-403
@@ -70,10 +77,11 @@ with open('liens_lectures_du_mois.txt', 'r') as lf:
         """Extraire la date de la page web"""
         date_du_jour = chercher_date_du_jour(lecture_texte)
         print(date_du_jour)
+        ajouter_texte_fichier(date_du_jour)
         
         """Extraire le texte de la page web"""
         texte_du_jour = chercher_texte_du_jour(lecture_texte)
-        print(texte_du_jour)
+        ajouter_texte_fichier(texte_du_jour)
         
         break
         
