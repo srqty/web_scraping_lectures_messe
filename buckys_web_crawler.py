@@ -6,7 +6,7 @@
 import re
 from bs4 import BeautifulSoup
 import urllib.request
-url = 'https://www.aelf.org/calendrier/romain/2018/11'
+url = 'https://www.aelf.org/calendrier/romain/2019)/02'
 req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
 html = urllib.request.urlopen(req).read()
   
@@ -31,19 +31,36 @@ def chercher_texte_du_jour(texte_de_messe):
     soup_lecture = BeautifulSoup(texte_de_messe, 'html.parser')
 
     texte_complet_liste = [] #créer une liste qui contiendra le texte
-    for texte in soup_lecture.find_all('div', {'id':re.compile('messe1_lecture[0-9]')}):  #Voire Mitchell, faut noter tous les éléments
-        texte_complet_liste.append(texte) 
-#Ajouter les lectures du jour. Voire «List append() in for loop [duplicate]» \ https://stackoverflow.com/questions/41452819/list-append-in-for-loop
+    for texte in soup_lecture.find_all('div', {'id':re.compile('messe1_lecture[0-9]')}):  #Voire Mitchell, faut noter tous les éléments texte_complet_liste.append(texte) #Ajouter les lectures du jour. Voire «List append() in for loop [duplicate]» \ https://stackoverflow.com/questions/41452819/list-append-in-for-loop #Convertir la liste dans un seul string #«Python map() function» https://www.journaldev.com/22960/python-map-function return("".join(map(str, texte_complet_liste))) """Regex pour ajouter le jour de la semaine à la date.""" """Reçoit la date sans jour de la semaine + Retourne: la date avec le jour de la semaine"""
+   def ajouter_jour_de_la_semaine(date_sans_jour):
+        pattern1 = re.compile(r'(<h4 class="date">(1 février 2019)</h4>|<h4 class="date">(8  février 2019)</h4>|<h4 class="date">(15 février 2019)</h4>|<h4 class="date">(22 février 2019)</h4>|<h4 class="date">(28 février 2019)</h4>)') 
+        pattern2 = re.compile(r'(<h4 class="date">(2 février 2019)</h4>|<h4 class="date">(9 février 2019)</h4>|<h4 class="date">(16 février 2019)</h4>|<h4 class="date">(23 février 2019)</h4>|<h4 class="date">(30 février 2019)</h4>)')
+        pattern3 = re.compile(r'(<h4 class="date">(3 février 2019)</h4>|<h4 class="date">(10 février 2019)</h4>|<h4 class="date">(17 février 2019)</h4>|<h4 class="date">(24 février 2019)</h4>|<h4 class="date">(31 février 2019)</h4>)') 
+        pattern4 = re.compile(r'(<h4 class="date">(4 février 2019)</h4>|<h4 class="date">(11 février 2019)</h4>|<h4 class="date">(18 février 2019)</h4>|<h4 class="date">(25 février 2019)</h4>)') 
+        pattern5 = re.compile(r'(<h4 class="date">(5 février 2019)</h4>|<h4 class="date">(12 février 2019)</h4>|<h4 class="date">(19 février 2019)</h4>|<h4 class="date">(26 février 2019)</h4>)')
+        pattern6 = re.compile(r'(<h4 class="date">(6 février 2019)</h4>|<h4 class="date">(13 février 2019)</h4>|<h4 class="date">(20 février 2019)</h4>|<h4 class="date">(27 février 2019)</h4>)')
+        pattern7 = re.compile(r'(<h4 class="date">(7 février 2019)</h4>|<h4 class="date">(14 février 2019)</h4>|<h4 class="date">(21 février 2019)</h4>|<h4 class="date">(28 février 2019)</h4>)')
 
-    #Convertir la liste dans un seul string
-    #«Python map() function» https://www.journaldev.com/22960/python-map-function
-    return("".join(map(str, texte_complet_liste)))
+        if pattern1 in date_sans_jour:  #Python - Basic Operators https://www.tutorialspoint.com/python/python_basic_operators.htm
+            return(pattern1.sub(r'<p>vendredi \1</p>', date_sans_jour)
+        elif pattern2 in date_sans_jour:
+            return(pattern2.sub(r'samedi \1', date_sans_jour))
+        elif pattern3 in date_sans_jour:
+            return(pattern3.sub(r'dimanche \1', date_sans_jour))
+        
+        else:
+        assert une erreur voir automate the boring stuff
+
+        remplacer4 = pattern4.sub(r' lundi \1', remplacer3)
+        remplacer5 = pattern5.sub(r' mardi \1', remplacer4)
+        remplacer6 = pattern6.sub(r' mercredi \1', remplacer5)
+        remplacer7 = pattern7.sub(r'jeudi \1', lf_contents)
 
 """Reçoit: texte à ajouter au fichier +
     Retourne: rien"""
 def ajouter_texte_fichier(texte_ajouter):
     with open('messes_du_jour.html', 'a') as af:     
-        print(type(texte_ajouter)) # Pour savoir le type de variable       
+       # print(type(texte_ajouter)) # Pour savoir le type de variable       
         af.write(str(texte_ajouter))
 
 if __name__ == "__main__":
@@ -76,15 +93,25 @@ with open('liens_lectures_du_mois.txt', 'r') as lf:
         
         """Extraire la date de la page web"""
         date_du_jour = chercher_date_du_jour(lecture_texte)
-        print(date_du_jour)
-        ajouter_texte_fichier(date_du_jour)
-        
+       
+       """Ajouter le jour de la semaine à la date"""
+       date_avec_jour = ajouter_jour_de_la semaine(date_du_jour)
+       print(date_avec_jour)
+       ajouter_texte_fichier(date_avec_jour)
+
         """Extraire le texte de la page web"""
         texte_du_jour = chercher_texte_du_jour(lecture_texte)
         ajouter_texte_fichier(texte_du_jour)
+
+#    with open('outfile', 'w') as ef:
+#        ef.write(remplacer7)
+#        #explications https://stackoverflow.com/questions/18703525/attributeerror-str-object-has-no-attribute-write
+#        #remplacer7.write()
+#        print('"ef" est du type: ', type(ef))
         
-        break
         
+    
+    
         #for link in lectures_liste:
             #lecture_mess_du_jour = 
             #href = "https://www.aelf.org" + link.get('href')
