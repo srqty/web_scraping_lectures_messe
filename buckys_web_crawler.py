@@ -11,7 +11,7 @@ req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
 html = urllib.request.urlopen(req).read()
   
 """Reçoit: url de lecture du jour +
-    Retourne: le texte qui contient les lectures avec la date"""
+    Retourne type string:  le texte qui contient les lectures avec la date"""
 def chercher_texte_dans_lien(lien_du_messe):
     url_lecture = lien_du_messe
     req_lecture = urllib.request.Request(url_lecture, headers={'User-Agent': 'Mozilla/5.0'})
@@ -19,14 +19,15 @@ def chercher_texte_dans_lien(lien_du_messe):
     return(html_lecture)
 
 """Reçoit: url de lecture du jour +
-    Retourne: la date"""
+    Retourne: Objet du type BeautifulSoup avec la date et balises html"""
 def chercher_date_du_jour(texte_de_messe):
     soup_lecture = BeautifulSoup(texte_de_messe, 'html.parser')
     date = soup_lecture.find('h4', class_='date')
+    print('Variable date est du type: ', type(date))
     return(date)
 
 """Reçoit: url de lecture du jour +
-    Retourne: le texte du jour"""
+    Retourne: string. Le texte du jour"""
 def chercher_texte_du_jour(texte_de_messe):
     soup_lecture = BeautifulSoup(texte_de_messe, 'html.parser')
     texte_complet_liste = [] #créer une liste qui contiendra le texte
@@ -38,14 +39,14 @@ def chercher_texte_du_jour(texte_de_messe):
         return("".join(map(str, texte_complet_liste)))
 
 """Enlever balises html +
-Reçoit: date avec balises html +
-Retourne: string qui contient la date sans balises"""
+Reçoit: objet du type BeautifulSoup. Date avec balises html +
+Retourne: objet BeautifulSoup qui contient la date sans balises"""
 def enlever_balises_html(date_du_jour_avec_balises):
-    date_du_jour_sans_balises = date_du_jour_avec_balises.get_text()
+    return(date_du_jour_avec_balises.get_text())
         
 """Ajouter le jour de la semaine à la date.""" 
-"""Reçoit la date sans jour de la semaine + 
-Retourne: la date avec le jour de la semaine"""
+"""Reçoit: Objet BeautifulSoup avec  la date sans jour de la semaine + 
+Retourne: string qui contient la date avec le jour de la semaine"""
 def ajouter_jour_de_la_semaine(date_sans_jour):
     pattern1 = ('<h4 class="date">1 février 2019</h4>', '<h4 class="date">8  février 2019</h4>', '<h4 class="date">15 février 2019</h4>', '<h4 class="date">22 février 2019</h4>', '<h4 class="date">28 février 2019</h4>)') 
     pattern2 = ('<h4 class="date">2 février 2019</h4>', '<h4 class="date">9 février 2019</h4>', '<h4 class="date">16 février 2019</h4>', '<h4 class="date">23 février 2019</h4>', '<h4 class="date">30 février 2019</h4>)')
@@ -55,13 +56,13 @@ def ajouter_jour_de_la_semaine(date_sans_jour):
     pattern6 = ('<h4 class="date">6 février 2019</h4>', '<h4 class="date">13 février 2019</h4>', '<h4 class="date">20 février 2019</h4>', '<h4 class="date">27 février 2019</h4>)')
     pattern7 = ('<h4 class="date">7 février 2019</h4>', '<h4 class="date">14 février 2019</h4>', '<h4 class="date">21 février 2019</h4>', '<h4 class="date">28 février 2019</h4>)')
 
-    if date_sans_jour in pattern1:
+    if str(date_sans_jour) in pattern1:
         date_du_jour_sans_balises = enlever_balises_html(date_sans_jour)
-        date_du_jour_<p>_jour = "<p>le vendredi " + date_du_jour_sans_balises + "</p>"
-        return(date_du_jour_<p>_jour)
+        return("<p>le vendredi " + str(date_du_jour_sans_balises) + "</p>")
 
-"""Reçoit: texte à ajouter au fichier +
-    Retourne: rien"""
+
+"""Reçoit: string. Texte à ajouter au fichier +
+    Retourne: rien. Écrit le text au fichier avec balises html."""
 def ajouter_texte_fichier(texte_ajouter):
     with open('messes_du_jour.html', 'a') as af:     
        # print(type(texte_ajouter)) # Pour savoir le type de variable       
@@ -91,10 +92,10 @@ with open('liens_lectures_du_mois.txt', 'r') as lf:
     """Pour chacun des lignes dans le fichier, on effectue des opérations"""
     for ligne in lf:
         """Mettre le texte du liens dans un variable"""
-        lecture_texte = chercher_texte_dans_lien(ligne)
+        lecture_texte_complet = chercher_texte_dans_lien(ligne)
         
         """Extraire la date de la page web"""
-        date_du_jour = chercher_date_du_jour(lecture_texte)
+        date_du_jour = chercher_date_du_jour(lecture_texte_complet)
         print('"date_du_jour" est du type: ', type(date_du_jour))      
         """Ajouter le jour de la semaine à la date"""
         date_avec_jour = ajouter_jour_de_la_semaine(date_du_jour)
@@ -102,9 +103,9 @@ with open('liens_lectures_du_mois.txt', 'r') as lf:
         ajouter_texte_fichier(date_avec_jour)
 
         """Extraire le texte de la page web"""
-        texte_du_jour = chercher_texte_du_jour(lecture_texte)
+        texte_du_jour = chercher_texte_du_jour(lecture_texte_complet)
         ajouter_texte_fichier(texte_du_jour)
-
+        break
 #    with open('outfile', 'w') as ef:
 #        ef.write(remplacer7)
 #        #explications https://stackoverflow.com/questions/18703525/attributeerror-str-object-has-no-attribute-write
